@@ -12,10 +12,18 @@ def load_data(file_path):
     except Exception as e:
         print(f"An error occurred: {e}")
         return None
+def encode_categorical(data):
+    """Encode categorical column using one-hot encoding."""
+    encoded_data = pd.get_dummies(data, columns=['Class'])
+    return encoded_data
+
+
 
 def analyze_data(data):
     """Perform basic data analysis."""
     if data is not None:
+
+        data = encode_categorical(data)
         # Display summary statistics
         print("Summary Statistics:")
         print(data.describe())
@@ -30,12 +38,14 @@ def analyze_data(data):
             plt.show()
         
         # Plot bar plot for the class label (string type)
-        class_label_counts = data['Class'].value_counts()
+        class_columns = [col for col in data.columns if 'Class_' in col]
+        class_label_counts = data[class_columns].sum()
         class_label_counts.plot(kind='bar')
         plt.title('Class Label Distribution')
         plt.xlabel('Class Label')
         plt.ylabel('Count')
         plt.show()
+
 
 def main():
     file_path = input("Enter the path to the CSV file: ")
